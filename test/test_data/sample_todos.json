@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Complete project documentation",
+    "description": "Write comprehensive documentation for the Todo app including API docs, user guide, and developer documentation",
+    "isCompleted": false,
+    "createdAt": "2024-01-15T09:00:00.000Z",
+    "updatedAt": "2024-01-15T09:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "Implement user authentication",
+    "description": "Add login/logout functionality with secure password handling and session management",
+    "isCompleted": true,
+    "createdAt": "2024-01-14T14:30:00.000Z",
+    "updatedAt": "2024-01-14T16:45:00.000Z"
+  },
+  {
+    "id": 3,
+    "title": "Add dark mode support",
+    "description": "Implement theme switching functionality with persistent user preferences",
+    "isCompleted": false,
+    "createdAt": "2024-01-13T11:20:00.000Z",
+    "updatedAt": "2024-01-13T11:20:00.000Z"
+  },
+  {
+    "id": 4,
+    "title": "Optimize database queries",
+    "description": "Review and optimize SQLite queries for better performance and reduced memory usage",
+    "isCompleted": false,
+    "createdAt": "2024-01-12T16:15:00.000Z",
+    "updatedAt": "2024-01-12T16:15:00.000Z"
+  },
+  {
+    "id": 5,
+    "title": "Write unit tests",
+    "description": "Create comprehensive unit tests for all business logic and data layer components",
+    "isCompleted": true,
+    "createdAt": "2024-01-11T10:00:00.000Z",
+    "updatedAt": "2024-01-11T15:30:00.000Z"
+  }
+]
