@@ -26,8 +26,6 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
   ClaimType? _selectedClaimType;
   Reimbursement? _currentReimbursement;
   final List<ReimbursementAttachment> _localAttachments = [];
-  int _uploadedAttachmentCount = 0;
-  int _totalAttachmentsToUpload = 0;
 
   final List<ApprovalLine> _approvalLines = [
     const ApprovalLine(
@@ -94,7 +92,6 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
             );
           } else if (state is ReimbursementSuccess) {
             if (state.message.contains('created successfully')) {
-              // Jangan show snackbar untuk create, karena akan dilanjutkan dengan upload
               if (_localAttachments.isNotEmpty) {
                 // Reimbursement berhasil dibuat, sekarang load untuk dapat ID
                 context.read<ReimbursementBloc>().add(LoadReimbursements());
@@ -123,13 +120,6 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
                   backgroundColor: Colors.green,
                 ),
               );
-            } else if (state.message.contains(
-              'attachment added successfully',
-            )) {
-              setState(() {
-                _uploadedAttachmentCount++;
-              });
-              _checkAndSubmitReimbursement();
             }
           } else if (state is ReimbursementLoaded &&
               widget.existingReimbursement == null &&
@@ -138,22 +128,10 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
             final latestReimbursement = state.reimbursements.first;
             setState(() {
               _currentReimbursement = latestReimbursement;
-              _totalAttachmentsToUpload = _localAttachments.length;
-              _uploadedAttachmentCount = 0;
             });
 
-            // Upload semua attachments lokal
-            for (final attachment in _localAttachments) {
-              context.read<ReimbursementBloc>().add(
-                AddAttachment(
-                  reimbursementId: latestReimbursement.id!,
-                  filePath: attachment.filePath,
-                  fileName: attachment.fileName,
-                  amount: attachment.amount,
-                  description: attachment.description,
-                ),
-              );
-            }
+            // Upload semua attachments sekaligus dengan batch update
+            _uploadAllAttachments(latestReimbursement);
           }
         },
         builder: (context, state) {
@@ -797,18 +775,42 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
     return allAttachments;
   }
 
-  void _checkAndSubmitReimbursement() {
-    // Setelah semua attachment terupload, submit reimbursement
-    if (_currentReimbursement != null &&
-        _uploadedAttachmentCount >= _totalAttachmentsToUpload &&
-        _totalAttachmentsToUpload > 0) {
-      // Clear local attachments sekarang karena sudah terupload semua
+  Future<void> _uploadAllAttachments(Reimbursement reimbursement) async {
+    if (_localAttachments.isEmpty) return;
+
+    try {
+      // Gabungkan semua attachment yang ada dengan attachment baru
+      final allAttachments = [
+        ...reimbursement.attachments,
+        ..._localAttachments,
+      ];
+
+      // Update reimbursement dengan semua attachments sekaligus
+      final updatedReimbursement = reimbursement.copyWith(
+        attachments: allAttachments,
+        updatedAt: DateTime.now(),
+      );
+
+      // Update sekaligus
+      context.read<ReimbursementBloc>().add(
+        UpdateReimbursement(updatedReimbursement),
+      );
+
+      // Submit reimbursement
+      context.read<ReimbursementBloc>().add(
+        SubmitReimbursement(reimbursement.id!),
+      );
+
+      // Clear local attachments
       setState(() {
         _localAttachments.clear();
       });
-
-      context.read<ReimbursementBloc>().add(
-        SubmitReimbursement(_currentReimbursement!.id!),
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error uploading attachments: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
