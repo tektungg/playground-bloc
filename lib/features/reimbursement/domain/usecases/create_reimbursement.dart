@@ -15,14 +15,16 @@ class CreateReimbursement {
     final now = DateTime.now();
 
     final approvalLines = [
-      const ApprovalLine(
-        name: 'John Doe',
-        position: 'Manager',
+      ApprovalLine(
+        name: 'Yokevin Mayer Van Persie',
+        position: 'Big Boss',
         photoUrl: 'https://via.placeholder.com/50',
+        approvedAt: DateTime.now(),
+        isApproved: true,
       ),
       const ApprovalLine(
-        name: 'Jane Smith',
-        position: 'Finance Director',
+        name: 'Francino Gigi Satrio',
+        position: 'Medium Boss',
         photoUrl: 'https://via.placeholder.com/50',
       ),
     ];

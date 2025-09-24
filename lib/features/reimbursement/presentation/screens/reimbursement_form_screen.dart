@@ -28,10 +28,12 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
   final List<ReimbursementAttachment> _localAttachments = [];
 
   final List<ApprovalLine> _approvalLines = [
-    const ApprovalLine(
+    ApprovalLine(
       name: 'Yokevin Mayer Van Persie',
       position: 'Big Boss',
       photoUrl: 'https://via.placeholder.com/50',
+      approvedAt: DateTime.now(),
+      isApproved: true,
     ),
     const ApprovalLine(
       name: 'Francino Gigi Satrio',
@@ -59,7 +61,25 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    // Format: Mon, 2 Jan 2025
+    const List<String> days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const List<String> months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final weekday = days[date.weekday % 7];
+    final month = months[date.month - 1];
+    return '$weekday, ${date.day} $month ${date.year}';
   }
 
   @override
@@ -470,7 +490,7 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: Colors.blue,
                             ),
                           ),
                           if (isLocal) // Only show delete for local attachments
@@ -505,15 +525,29 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
 
             // Add more button
             Center(
-              child: TextButton.icon(
-                onPressed: _showUploadBottomSheet,
-                icon: const Icon(Icons.add_photo_alternate),
-                label: const Text('Tambah Bukti Lagi'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+              child: SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: _showUploadBottomSheet,
+                  icon: const Icon(Icons.add, color: Colors.grey),
+                  label: const Text(
+                    'Tambah Item',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.grey,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
                   ),
                 ),
               ),
@@ -593,32 +627,35 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
                     ),
                   ),
 
-                  // Status
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color:
-                          approvalLine.isApproved
-                              ? Colors.green.withValues(alpha: 0.1)
-                              : Colors.orange.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
+                  // Status (text only, with icon)
+                  Row(
+                    children: [
                       approvalLine.isApproved
-                          ? _formatDate(approvalLine.approvedAt!)
-                          : 'Menunggu',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color:
-                            approvalLine.isApproved
-                                ? Colors.green
-                                : Colors.orange,
-                        fontWeight: FontWeight.w500,
+                          ? const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 12,
+                          )
+                          : const Icon(
+                            Icons.schedule,
+                            color: Colors.grey,
+                            size: 12,
+                          ),
+                      const SizedBox(width: 4),
+                      Text(
+                        approvalLine.isApproved
+                            ? _formatDate(approvalLine.approvedAt!)
+                            : 'Menunggu',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color:
+                              approvalLine.isApproved
+                                  ? Colors.green
+                                  : Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               );
