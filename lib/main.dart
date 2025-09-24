@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection_container.dart';
-import 'presentation/bloc/todo_bloc.dart';
-import 'presentation/screens/todo_list_screen.dart';
+import 'features/reimbursement/presentation/bloc/reimbursement_bloc.dart';
+import 'features/reimbursement/presentation/screens/reimbursement_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,18 +16,26 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Todo List App',
+      title: 'Reimbursement App',
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFF0F2F5),
         primarySwatch: Colors.blue,
         useMaterial3: true,
         appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
         cardTheme: const CardThemeData(
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
         ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(elevation: 4),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          elevation: 4,
+        ),
       ),
-      home: BlocProvider(create: (context) => sl<TodoBloc>(), child: const TodoListScreen()),
+      home: BlocProvider(
+        create: (context) => sl<ReimbursementBloc>(),
+        child: const ReimbursementListScreen(),
+      ),
     );
   }
 }
