@@ -35,19 +35,19 @@ class _ReimbursementListScreenState extends State<ReimbursementListScreen> {
       body: BlocConsumer<ReimbursementBloc, ReimbursementState>(
         listener: (context, state) {
           if (state is ReimbursementError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: Text(state.message),
+            //     backgroundColor: Colors.red,
+            //   ),
+            // );
           } else if (state is ReimbursementSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.green,
-              ),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: Text(state.message),
+            //     backgroundColor: Colors.green,
+            //   ),
+            // );
           }
         },
         builder: (context, state) {
@@ -74,60 +74,60 @@ class _ReimbursementListScreenState extends State<ReimbursementListScreen> {
                 ),
               );
             }
-            return CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final reimbursement = state.reimbursements[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Slidable(
-                          key: ValueKey(reimbursement.id),
-                          endActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed:
-                                    (context) => _navigateToEditReimbursement(
-                                      context,
-                                      reimbursement,
-                                    ),
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                icon: Icons.edit,
-                                label: 'Edit',
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              SlidableAction(
-                                onPressed:
-                                    (context) => _showDeleteConfirmation(
-                                      context,
-                                      reimbursement,
-                                    ),
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
-                                label: 'Hapus',
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ],
-                          ),
-                          child: ReimbursementItem(
-                            reimbursement: reimbursement,
-                            onTap:
-                                () => _navigateToEditReimbursement(
-                                  context,
-                                  reimbursement,
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<ReimbursementBloc>().add(LoadReimbursements());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final reimbursement = state.reimbursements[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Slidable(
+                            key: ValueKey(reimbursement.id),
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed:
+                                      (context) => _navigateToEditReimbursement(
+                                        context,
+                                        reimbursement,
+                                      ),
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.edit,
+                                  label: 'Edit',
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
+                                SlidableAction(
+                                  onPressed:
+                                      (context) => _showDeleteConfirmation(
+                                        context,
+                                        reimbursement,
+                                      ),
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Hapus',
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ],
+                            ),
+                            child: ReimbursementItem(
+                              reimbursement: reimbursement,
+                            ),
                           ),
-                        ),
-                      );
-                    }, childCount: state.reimbursements.length),
+                        );
+                      }, childCount: state.reimbursements.length),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           } else if (state is ReimbursementError) {
             return Center(

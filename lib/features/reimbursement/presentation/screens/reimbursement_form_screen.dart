@@ -111,36 +111,12 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
               ),
             );
           } else if (state is ReimbursementSuccess) {
-            if (state.message.contains('created successfully')) {
-              if (_localAttachments.isNotEmpty) {
-                // Reimbursement berhasil dibuat, sekarang load untuk dapat ID
-                context.read<ReimbursementBloc>().add(LoadReimbursements());
-              } else {
-                // Tidak ada attachment lokal, show success message dan kembali
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Reimbursement berhasil dibuat'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              }
-            } else if (state.message.contains('submitted successfully')) {
-              // Show success untuk final submit dan kembali ke list
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reimbursement berhasil diajukan'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            } else if (state.message.contains('updated successfully')) {
-              // Show success untuk update dan kembali ke list
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
+            );
           } else if (state is ReimbursementLoaded &&
               widget.existingReimbursement == null &&
               _currentReimbursement == null &&
@@ -466,15 +442,6 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
                                 color: Colors.black87,
                               ),
                             ),
-                            if (isLocal)
-                              Text(
-                                '(Belum diupload)',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.orange[600],
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
                           ],
                         ),
                       ),
