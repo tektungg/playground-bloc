@@ -9,8 +9,8 @@ class AddAttachmentToReimbursement {
 
   Future<Either<String, Reimbursement>> call({
     required int reimbursementId,
-    required String filePath,
-    required String fileName,
+    required List<String> filePaths,
+    required List<String> fileNames,
     required double amount,
     required String description,
   }) async {
@@ -22,8 +22,8 @@ class AddAttachmentToReimbursement {
       reimbursement,
     ) async {
       final newAttachment = ReimbursementAttachment(
-        filePath: filePath,
-        fileName: fileName,
+        filePaths: filePaths,
+        fileNames: fileNames,
         amount: amount,
         description: description,
       );
@@ -36,5 +36,22 @@ class AddAttachmentToReimbursement {
 
       return await repository.updateReimbursement(updatedReimbursement);
     });
+  }
+
+  // Backward compatibility method
+  Future<Either<String, Reimbursement>> callSingle({
+    required int reimbursementId,
+    required String filePath,
+    required String fileName,
+    required double amount,
+    required String description,
+  }) async {
+    return call(
+      reimbursementId: reimbursementId,
+      filePaths: [filePath],
+      fileNames: [fileName],
+      amount: amount,
+      description: description,
+    );
   }
 }

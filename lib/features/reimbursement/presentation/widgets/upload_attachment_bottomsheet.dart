@@ -31,9 +31,9 @@ class _UploadAttachmentBottomSheetState
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  String? _selectedFilePath;
-  String? _selectedFileName;
-  File? _selectedImageFile;
+  final List<String> _selectedFilePaths = [];
+  final List<String> _selectedFileNames = [];
+  final List<File> _selectedImageFiles = [];
 
   @override
   void dispose() {
@@ -110,19 +110,63 @@ class _UploadAttachmentBottomSheetState
                             color: Colors.grey[50],
                           ),
                           child:
-                              _selectedImageFile != null
+                              _selectedImageFiles.isNotEmpty
                                   ? Column(
                                     children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                              top: Radius.circular(8),
-                                            ),
-                                        child: Image.file(
-                                          _selectedImageFile!,
-                                          height: 150,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
+                                      // Display selected images in a horizontal scroll
+                                      SizedBox(
+                                        height: 120,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: _selectedImageFiles.length,
+                                          itemBuilder: (context, index) {
+                                            return Container(
+                                              margin: const EdgeInsets.only(
+                                                right: 8,
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                    child: Image.file(
+                                                      _selectedImageFiles[index],
+                                                      height: 120,
+                                                      width: 120,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  // Remove button
+                                                  Positioned(
+                                                    top: 4,
+                                                    right: 4,
+                                                    child: GestureDetector(
+                                                      onTap:
+                                                          () => _removeImage(
+                                                            index,
+                                                          ),
+                                                      child: Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                              color: Colors.red,
+                                                              shape:
+                                                                  BoxShape
+                                                                      .circle,
+                                                            ),
+                                                        child: const Icon(
+                                                          Icons.close,
+                                                          color: Colors.white,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                       Padding(
@@ -136,15 +180,14 @@ class _UploadAttachmentBottomSheetState
                                             const SizedBox(width: 8),
                                             Expanded(
                                               child: Text(
-                                                _selectedFileName ??
-                                                    'Gambar dipilih',
+                                                '${_selectedImageFiles.length} gambar dipilih',
                                                 style: const TextStyle(
                                                   color: Colors.black87,
                                                 ),
                                               ),
                                             ),
                                             const Text(
-                                              'Tap untuk ganti',
+                                              'Tap untuk tambah/ubah',
                                               style: TextStyle(
                                                 color: Colors.blue,
                                               ),
@@ -208,7 +251,6 @@ class _UploadAttachmentBottomSheetState
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: 'Masukkan nominal',
-                          prefixText: 'Rp ',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -299,23 +341,20 @@ class _UploadAttachmentBottomSheetState
   Future<void> _selectFile() async {
     try {
       final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      final List<XFile>? images = await picker.pickMultiImage(imageQuality: 80);
 
-      if (image != null) {
+      if (images != null && images.isNotEmpty) {
         setState(() {
-          _selectedImageFile = File(image.path);
-          _selectedFileName = image.name;
-          _selectedFilePath = image.path;
+          _selectedImageFiles.addAll(images.map((image) => File(image.path)));
+          _selectedFileNames.addAll(images.map((image) => image.name));
+          _selectedFilePaths.addAll(images.map((image) => image.path));
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Gambar berhasil dipilih'),
+          SnackBar(
+            content: Text('${images.length} gambar berhasil dipilih'),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 1),
+            duration: const Duration(seconds: 1),
           ),
         );
       }
@@ -329,12 +368,20 @@ class _UploadAttachmentBottomSheetState
     }
   }
 
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImageFiles.removeAt(index);
+      _selectedFileNames.removeAt(index);
+      _selectedFilePaths.removeAt(index);
+    });
+  }
+
   void _saveAttachment() {
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedFilePath == null) {
+      if (_selectedFilePaths.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Silakan pilih file terlebih dahulu'),
+            content: Text('Silakan pilih minimal 1 gambar terlebih dahulu'),
             backgroundColor: Colors.red,
           ),
         );
@@ -346,8 +393,8 @@ class _UploadAttachmentBottomSheetState
       if (widget.isLocalMode && widget.onAttachmentAdded != null) {
         // Mode lokal - hanya return data attachment
         final attachment = ReimbursementAttachment(
-          filePath: _selectedFilePath!,
-          fileName: _selectedFileName!,
+          filePaths: _selectedFilePaths,
+          fileNames: _selectedFileNames,
           amount: amount,
           description: _descriptionController.text,
         );
@@ -357,8 +404,8 @@ class _UploadAttachmentBottomSheetState
         context.read<ReimbursementBloc>().add(
           AddAttachment(
             reimbursementId: widget.reimbursementId,
-            filePath: _selectedFilePath!,
-            fileName: _selectedFileName!,
+            filePaths: _selectedFilePaths,
+            fileNames: _selectedFileNames,
             amount: amount,
             description: _descriptionController.text,
           ),

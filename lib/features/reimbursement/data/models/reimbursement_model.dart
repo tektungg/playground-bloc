@@ -65,14 +65,14 @@ class ApprovalLineModel extends Equatable {
 }
 
 class ReimbursementAttachmentModel extends Equatable {
-  final String filePath;
-  final String fileName;
+  final List<String> filePaths;
+  final List<String> fileNames;
   final double amount;
   final String description;
 
   const ReimbursementAttachmentModel({
-    required this.filePath,
-    required this.fileName,
+    required this.filePaths,
+    required this.fileNames,
     required this.amount,
     required this.description,
   });
@@ -81,17 +81,31 @@ class ReimbursementAttachmentModel extends Equatable {
     ReimbursementAttachment attachment,
   ) {
     return ReimbursementAttachmentModel(
-      filePath: attachment.filePath,
-      fileName: attachment.fileName,
+      filePaths: attachment.filePaths,
+      fileNames: attachment.fileNames,
       amount: attachment.amount,
       description: attachment.description,
     );
   }
 
   factory ReimbursementAttachmentModel.fromMap(Map<String, dynamic> map) {
+    // Handle both old and new format for backward compatibility
+    List<String> filePaths;
+    List<String> fileNames;
+
+    if (map['filePaths'] != null) {
+      // New format with multiple files
+      filePaths = List<String>.from(map['filePaths'] as List);
+      fileNames = List<String>.from(map['fileNames'] as List);
+    } else {
+      // Old format with single file - migrate to new format
+      filePaths = [map['filePath'] as String];
+      fileNames = [map['fileName'] as String];
+    }
+
     return ReimbursementAttachmentModel(
-      filePath: map['filePath'] as String,
-      fileName: map['fileName'] as String,
+      filePaths: filePaths,
+      fileNames: fileNames,
       amount: (map['amount'] as num).toDouble(),
       description: map['description'] as String,
     );
@@ -99,24 +113,31 @@ class ReimbursementAttachmentModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      'filePath': filePath,
-      'fileName': fileName,
+      'filePaths': filePaths,
+      'fileNames': fileNames,
       'amount': amount,
       'description': description,
+      // Keep old format for backward compatibility
+      'filePath': filePaths.isNotEmpty ? filePaths.first : '',
+      'fileName': fileNames.isNotEmpty ? fileNames.first : '',
     };
   }
 
   ReimbursementAttachment toEntity() {
     return ReimbursementAttachment(
-      filePath: filePath,
-      fileName: fileName,
+      filePaths: filePaths,
+      fileNames: fileNames,
       amount: amount,
       description: description,
     );
   }
 
+  // Convenience getters for backward compatibility
+  String get filePath => filePaths.isNotEmpty ? filePaths.first : '';
+  String get fileName => fileNames.isNotEmpty ? fileNames.first : '';
+
   @override
-  List<Object?> get props => [filePath, fileName, amount, description];
+  List<Object?> get props => [filePaths, fileNames, amount, description];
 }
 
 class ReimbursementModel extends Equatable {

@@ -101,8 +101,8 @@ class ReimbursementBloc extends Bloc<ReimbursementEvent, ReimbursementState> {
   ) async {
     final result = await addAttachmentToReimbursement(
       reimbursementId: event.reimbursementId,
-      filePath: event.filePath,
-      fileName: event.fileName,
+      filePaths: event.filePaths,
+      fileNames: event.fileNames,
       amount: event.amount,
       description: event.description,
     );

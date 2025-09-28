@@ -399,88 +399,113 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
 
                 return Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image thumbnail
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[200],
+                      // Images display
+                      if (attachment.filePaths.isNotEmpty)
+                        SizedBox(
+                          height: 80,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: attachment.filePaths.length,
+                            itemBuilder: (context, imageIndex) {
+                              final filePath = attachment.filePaths[imageIndex];
+                              return Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.grey[200],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child:
+                                            filePath.isNotEmpty &&
+                                                    File(filePath).existsSync()
+                                                ? Image.file(
+                                                  File(filePath),
+                                                  fit: BoxFit.cover,
+                                                )
+                                                : const Icon(
+                                                  Icons.image,
+                                                  color: Colors.grey,
+                                                  size: 30,
+                                                ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child:
-                              attachment.filePath.isNotEmpty &&
-                                      File(attachment.filePath).existsSync()
-                                  ? Image.file(
-                                    File(attachment.filePath),
-                                    fit: BoxFit.cover,
-                                  )
-                                  : const Icon(
-                                    Icons.image,
-                                    color: Colors.grey,
-                                    size: 30,
-                                  ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
+                      const SizedBox(height: 8),
 
-                      // Description and details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              attachment.description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // Amount and delete button
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      // Description and amount row
+                      Row(
                         children: [
-                          Text(
-                            'Rp ${attachment.amount.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
+                          // Description and details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  attachment.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          if (isLocal) // Only show delete for local attachments
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  // Remove from local attachments using actual index
-                                  final localIndex = index;
-                                  if (localIndex < _localAttachments.length) {
-                                    _localAttachments.removeAt(localIndex);
-                                  }
-                                });
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 4),
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.red,
-                                  size: 20,
+
+                          const SizedBox(width: 12),
+
+                          // Amount and delete button
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Rp ${attachment.amount.toStringAsFixed(0)}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
                                 ),
                               ),
-                            ),
+                              if (isLocal) // Only show delete for local attachments
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      // Remove from local attachments using actual index
+                                      final localIndex = index;
+                                      if (localIndex <
+                                          _localAttachments.length) {
+                                        _localAttachments.removeAt(localIndex);
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 4),
+                                    padding: const EdgeInsets.all(4),
+                                    child: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
                     ],

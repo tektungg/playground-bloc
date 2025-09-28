@@ -54,24 +54,39 @@ class DeleteReimbursement extends ReimbursementEvent {
 
 class AddAttachment extends ReimbursementEvent {
   final int reimbursementId;
-  final String filePath;
-  final String fileName;
+  final List<String> filePaths;
+  final List<String> fileNames;
   final double amount;
   final String description;
 
   const AddAttachment({
     required this.reimbursementId,
-    required this.filePath,
-    required this.fileName,
+    required this.filePaths,
+    required this.fileNames,
     required this.amount,
     required this.description,
   });
 
+  // Backward compatibility constructors
+  AddAttachment.single({
+    required int reimbursementId,
+    required String filePath,
+    required String fileName,
+    required double amount,
+    required String description,
+  }) : this(
+         reimbursementId: reimbursementId,
+         filePaths: [filePath],
+         fileNames: [fileName],
+         amount: amount,
+         description: description,
+       );
+
   @override
   List<Object?> get props => [
     reimbursementId,
-    filePath,
-    fileName,
+    filePaths,
+    fileNames,
     amount,
     description,
   ];

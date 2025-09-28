@@ -50,34 +50,38 @@ class ApprovalLine extends Equatable {
 }
 
 class ReimbursementAttachment extends Equatable {
-  final String filePath;
-  final String fileName;
+  final List<String> filePaths;
+  final List<String> fileNames;
   final double amount;
   final String description;
 
   const ReimbursementAttachment({
-    required this.filePath,
-    required this.fileName,
+    required this.filePaths,
+    required this.fileNames,
     required this.amount,
     required this.description,
   });
 
   ReimbursementAttachment copyWith({
-    String? filePath,
-    String? fileName,
+    List<String>? filePaths,
+    List<String>? fileNames,
     double? amount,
     String? description,
   }) {
     return ReimbursementAttachment(
-      filePath: filePath ?? this.filePath,
-      fileName: fileName ?? this.fileName,
+      filePaths: filePaths ?? this.filePaths,
+      fileNames: fileNames ?? this.fileNames,
       amount: amount ?? this.amount,
       description: description ?? this.description,
     );
   }
 
+  // Convenience getters for backward compatibility
+  String get filePath => filePaths.isNotEmpty ? filePaths.first : '';
+  String get fileName => fileNames.isNotEmpty ? fileNames.first : '';
+
   @override
-  List<Object?> get props => [filePath, fileName, amount, description];
+  List<Object?> get props => [filePaths, fileNames, amount, description];
 }
 
 class Reimbursement extends Equatable {
