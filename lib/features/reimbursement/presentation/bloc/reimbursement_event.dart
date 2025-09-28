@@ -34,15 +34,6 @@ class UpdateReimbursement extends ReimbursementEvent {
   List<Object?> get props => [reimbursement];
 }
 
-class SubmitReimbursement extends ReimbursementEvent {
-  final int id;
-
-  const SubmitReimbursement(this.id);
-
-  @override
-  List<Object?> get props => [id];
-}
-
 class DeleteReimbursement extends ReimbursementEvent {
   final int id;
 

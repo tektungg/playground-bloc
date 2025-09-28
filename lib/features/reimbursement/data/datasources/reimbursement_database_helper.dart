@@ -30,7 +30,7 @@ class ReimbursementDatabaseHelper {
         detail TEXT NOT NULL,
         attachments TEXT NOT NULL,
         approvalLines TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'draft',
+        status TEXT NOT NULL DEFAULT 'submitted',
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL
       )

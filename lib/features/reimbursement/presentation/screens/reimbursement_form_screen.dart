@@ -825,11 +825,6 @@ class _ReimbursementFormScreenState extends State<ReimbursementFormScreen> {
         UpdateReimbursement(updatedReimbursement),
       );
 
-      // Submit reimbursement
-      context.read<ReimbursementBloc>().add(
-        SubmitReimbursement(reimbursement.id!),
-      );
-
       // Clear local attachments
       setState(() {
         _localAttachments.clear();

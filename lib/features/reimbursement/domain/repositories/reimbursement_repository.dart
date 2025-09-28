@@ -11,7 +11,7 @@ abstract class ReimbursementRepository {
     Reimbursement reimbursement,
   );
   Future<Either<String, void>> deleteReimbursement(int id);
-  Future<Either<String, Reimbursement>> submitReimbursement(int id);
+
   Future<Either<String, List<Reimbursement>>> getReimbursementsByStatus(
     ReimbursementStatus status,
   );

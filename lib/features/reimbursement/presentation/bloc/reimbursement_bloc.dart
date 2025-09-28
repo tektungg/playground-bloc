@@ -4,8 +4,7 @@ import '../../domain/usecases/create_reimbursement.dart'
 import '../../domain/usecases/get_all_reimbursements.dart';
 import '../../domain/usecases/update_reimbursement.dart'
     as update_reimbursement;
-import '../../domain/usecases/submit_reimbursement.dart'
-    as submit_reimbursement;
+
 import '../../domain/usecases/add_attachment_to_reimbursement.dart';
 import '../../domain/usecases/delete_reimbursement.dart'
     as delete_reimbursement;
@@ -16,7 +15,7 @@ class ReimbursementBloc extends Bloc<ReimbursementEvent, ReimbursementState> {
   final GetAllReimbursements getAllReimbursements;
   final create_reimbursement.CreateReimbursement createReimbursement;
   final update_reimbursement.UpdateReimbursement updateReimbursement;
-  final submit_reimbursement.SubmitReimbursement submitReimbursement;
+
   final AddAttachmentToReimbursement addAttachmentToReimbursement;
   final delete_reimbursement.DeleteReimbursement deleteReimbursement;
 
@@ -24,14 +23,13 @@ class ReimbursementBloc extends Bloc<ReimbursementEvent, ReimbursementState> {
     required this.getAllReimbursements,
     required this.createReimbursement,
     required this.updateReimbursement,
-    required this.submitReimbursement,
+
     required this.addAttachmentToReimbursement,
     required this.deleteReimbursement,
   }) : super(ReimbursementInitial()) {
     on<LoadReimbursements>(_onLoadReimbursements);
     on<CreateReimbursement>(_onCreateReimbursement);
     on<UpdateReimbursement>(_onUpdateReimbursement);
-    on<SubmitReimbursement>(_onSubmitReimbursement);
     on<AddAttachment>(_onAddAttachment);
     on<DeleteReimbursement>(_onDeleteReimbursement);
   }
@@ -77,20 +75,6 @@ class ReimbursementBloc extends Bloc<ReimbursementEvent, ReimbursementState> {
       reimbursement,
     ) {
       emit(const ReimbursementSuccess('Reimbursement updated successfully'));
-      add(LoadReimbursements());
-    });
-  }
-
-  Future<void> _onSubmitReimbursement(
-    SubmitReimbursement event,
-    Emitter<ReimbursementState> emit,
-  ) async {
-    final result = await submitReimbursement(event.id);
-
-    result.fold((failure) => emit(ReimbursementError(failure)), (
-      reimbursement,
-    ) {
-      emit(const ReimbursementSuccess('Reimbursement submitted successfully'));
       add(LoadReimbursements());
     });
   }

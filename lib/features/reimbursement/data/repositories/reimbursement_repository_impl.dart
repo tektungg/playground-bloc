@@ -99,26 +99,6 @@ class ReimbursementRepositoryImpl implements ReimbursementRepository {
   }
 
   @override
-  Future<Either<String, Reimbursement>> submitReimbursement(int id) async {
-    try {
-      final reimbursementResult = await getReimbursementById(id);
-
-      return reimbursementResult.fold((error) => Left(error), (
-        reimbursement,
-      ) async {
-        final submittedReimbursement = reimbursement.copyWith(
-          status: ReimbursementStatus.submitted,
-          updatedAt: DateTime.now(),
-        );
-
-        return await updateReimbursement(submittedReimbursement);
-      });
-    } catch (e) {
-      return Left('Failed to submit reimbursement: $e');
-    }
-  }
-
-  @override
   Future<Either<String, List<Reimbursement>>> getReimbursementsByStatus(
     ReimbursementStatus status,
   ) async {

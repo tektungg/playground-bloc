@@ -16,7 +16,7 @@ import '../../features/reimbursement/domain/repositories/reimbursement_repositor
 import '../../features/reimbursement/domain/usecases/create_reimbursement.dart';
 import '../../features/reimbursement/domain/usecases/get_all_reimbursements.dart';
 import '../../features/reimbursement/domain/usecases/update_reimbursement.dart';
-import '../../features/reimbursement/domain/usecases/submit_reimbursement.dart';
+
 import '../../features/reimbursement/domain/usecases/add_attachment_to_reimbursement.dart';
 import '../../features/reimbursement/domain/usecases/delete_reimbursement.dart';
 import '../../features/reimbursement/presentation/bloc/reimbursement_bloc.dart';
@@ -47,7 +47,7 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton(() => GetAllReimbursements(sl()));
   sl.registerLazySingleton(() => CreateReimbursement(sl()));
   sl.registerLazySingleton(() => UpdateReimbursement(sl()));
-  sl.registerLazySingleton(() => SubmitReimbursement(sl()));
+
   sl.registerLazySingleton(() => AddAttachmentToReimbursement(sl()));
   sl.registerLazySingleton(() => DeleteReimbursement(sl()));
 
@@ -67,7 +67,7 @@ Future<void> initializeDependencies() async {
       getAllReimbursements: sl(),
       createReimbursement: sl(),
       updateReimbursement: sl(),
-      submitReimbursement: sl(),
+
       addAttachmentToReimbursement: sl(),
       deleteReimbursement: sl(),
     ),

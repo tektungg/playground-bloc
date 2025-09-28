@@ -35,7 +35,7 @@ class CreateReimbursement {
       detail: detail,
       attachments: [],
       approvalLines: approvalLines,
-      status: ReimbursementStatus.draft,
+      status: ReimbursementStatus.submitted,
       createdAt: now,
       updatedAt: now,
     );

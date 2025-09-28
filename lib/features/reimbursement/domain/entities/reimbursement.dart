@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum ReimbursementStatus { draft, submitted, approved, rejected }
+enum ReimbursementStatus { submitted, approved, rejected }
 
 enum ClaimType {
   officeSupplies('Alat Kantor'),
@@ -102,7 +102,7 @@ class Reimbursement extends Equatable {
     required this.detail,
     required this.attachments,
     required this.approvalLines,
-    this.status = ReimbursementStatus.draft,
+    this.status = ReimbursementStatus.submitted,
     required this.createdAt,
     required this.updatedAt,
   });

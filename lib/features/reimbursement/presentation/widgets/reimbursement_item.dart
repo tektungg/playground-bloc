@@ -96,13 +96,11 @@ class ReimbursementItem extends StatelessWidget {
                 ],
               ),
 
-              // Show approval progress if submitted
-              if (reimbursement.status != ReimbursementStatus.draft) ...[
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 8),
-                _buildApprovalProgress(),
-              ],
+              // approval progress
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 8),
+              _buildApprovalProgress(),
             ],
           ),
         ),
@@ -116,14 +114,9 @@ class ReimbursementItem extends StatelessWidget {
     String label;
 
     switch (reimbursement.status) {
-      case ReimbursementStatus.draft:
+      case ReimbursementStatus.submitted:
         backgroundColor = Colors.grey.withValues(alpha: 0.1);
         textColor = Colors.grey;
-        label = 'Draft';
-        break;
-      case ReimbursementStatus.submitted:
-        backgroundColor = Colors.orange.withValues(alpha: 0.1);
-        textColor = Colors.orange;
         label = 'Submitted';
         break;
       case ReimbursementStatus.approved:
